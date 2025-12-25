@@ -47,7 +47,7 @@ const Process = () => {
         >
           <span className="badge mb-4">Workflow</span>
           <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4">
-            How I <span className="text-gradient">Build</span> Mobile Apps
+            How I <span className="text-gradient">Build</span> Systems
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             A systematic approach to building production-ready mobile applications.
