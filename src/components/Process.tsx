@@ -28,7 +28,7 @@ const steps = [
     number: "04",
     title: "Testing & Deployment",
     description:
-      "Thorough testing, performance optimization, and smooth deployment to App Store and Play Store.",
+      "Thorough testing, performance optimization, and smooth deployment to the Web.",
     icon: Rocket,
   },
 ];
