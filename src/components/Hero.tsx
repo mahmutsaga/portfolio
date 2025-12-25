@@ -23,28 +23,14 @@ const Hero = () => {
 
   const scrollToProjects = () => {
     const projectsSection = document.getElementById("projects");
-    if (projectsSection) {
-      const targetPosition =
-        projectsSection.getBoundingClientRect().top + window.scrollY;
-      const startPosition = window.scrollY;
-      const distance = targetPosition - startPosition;
-      const duration = 1000;
-      let startTime: number | null = null;
+    if (!projectsSection) return;
 
-      const easeInOutCubic = (t: number) =>
-        t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-      const animation = (currentTime: number) => {
-        if (startTime === null) startTime = currentTime;
-        const timeElapsed = currentTime - startTime;
-        const progress = Math.min(timeElapsed / duration, 1);
-        const easeProgress = easeInOutCubic(progress);
-        window.scrollTo(0, startPosition + distance * easeProgress);
-        if (timeElapsed < duration) requestAnimationFrame(animation);
-      };
-      requestAnimationFrame(animation);
-    }
+    projectsSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   };
+
 
   return (
     <section className="relative min-h-screen overflow-hidden">
@@ -114,13 +100,6 @@ const Hero = () => {
             >
               <Button variant="hero" size="lg" onClick={scrollToProjects}>
                 View Projects <ArrowDown className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="heroOutline"
-                size="lg"
-                onClick={() => setIsCVModalOpen(true)}
-              >
-                View CV <FileText className="w-4 h-4" />
               </Button>
             </motion.div>
 
