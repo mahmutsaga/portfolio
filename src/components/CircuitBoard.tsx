@@ -268,7 +268,7 @@ export default function CircuitBoard() {
             top: 0, left: 0,
             overflow: "visible",
             pointerEvents: "none",
-            zIndex: 5,
+            zIndex: 0,
           }}
         >
           <defs>
