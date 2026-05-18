@@ -8,9 +8,10 @@ const springValues = {
 };
 
 export default function TiltedCard({
-  bgColor = '#0b0d11', // pozadina
-  borderColor = '#1f2937', // boja border-a
-  borderWidth = '2px', // debljina border-a
+  bgColor = '#0b0d11',
+  borderColor = '#1f2937',
+  borderWidth = '2px',
+  borderRadius = '15px',
   captionText = '',
   containerHeight = '300px',
   containerWidth = '100%',
@@ -97,7 +98,8 @@ export default function TiltedCard({
           rotateY,
           scale,
           backgroundColor: bgColor,
-          border: `${borderWidth} solid ${borderColor}`
+          border: `${borderWidth} solid ${borderColor}`,
+          borderRadius,
         }}
       >
         {displayOverlayContent && overlayContent && (
