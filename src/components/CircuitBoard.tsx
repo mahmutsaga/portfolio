@@ -9,6 +9,7 @@ import Chip from "./Chip";
 import Navbar from "./Navbar";
 import TiltedCard from "./ui/TiltedCard";
 import { LAYERS, CONNECTIONS } from "@/data/layers";
+import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 // ── Constants ──────────────────────────────────────────────────────
 const LASER_DUR    = 1.4;   // seconds for one packet to travel the path
@@ -112,6 +113,7 @@ function WorkCard({
 
 // ── Main component ────────────────────────────────────────────────
 export default function CircuitBoard() {
+  const { isMobile, isTablet } = useBreakpoint();
   const containerRef  = useRef<HTMLDivElement>(null);
   const chipRefs      = useRef(new Map<string, HTMLDivElement>());
   const sectionRefs   = useRef<(HTMLDivElement | null)[]>([]);
@@ -383,7 +385,7 @@ export default function CircuitBoard() {
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                padding: "72px 48px 48px", // top pad clears navbar
+                padding: isMobile ? "64px 16px 24px" : isTablet ? "72px 28px 32px" : "72px 48px 48px",
                 position: "relative",
                 zIndex: 1,
                 boxSizing: "border-box",
@@ -437,12 +439,12 @@ export default function CircuitBoard() {
                   {layer.title}
                 </h2>
 
-                {/* 4-column TiltedCard chip grid */}
+                {/* chip grid */}
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(4, 1fr)",
-                    gap: 16,
+                    gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : isTablet ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
+                    gap: isMobile ? 10 : 16,
                   }}
                 >
                   {layer.techs.map((tech) => (
@@ -451,7 +453,7 @@ export default function CircuitBoard() {
                       ref={refFor(tech.id)}
                     >
                       <TiltedCard
-                        containerHeight="250px"
+                        containerHeight={isMobile ? "190px" : isTablet ? "220px" : "250px"}
                         bgColor="#040404"
                         borderColor={isActive ? `${tech.color}28` : "#181818"}
                         borderWidth="0.5px"
@@ -490,7 +492,7 @@ export default function CircuitBoard() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "72px 48px 48px",
+            padding: isMobile ? "64px 16px 24px" : isTablet ? "72px 28px 32px" : "72px 48px 48px",
             position: "relative",
             zIndex: 1,
             boxSizing: "border-box",
@@ -528,8 +530,8 @@ export default function CircuitBoard() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: 48,
+                gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+                gap: isMobile ? 32 : 48,
                 alignItems: "start",
               }}
             >
@@ -538,7 +540,7 @@ export default function CircuitBoard() {
                 <p
                   style={{
                     fontFamily: "'Inter', sans-serif",
-                    fontSize: 16,
+                    fontSize: isMobile ? 14 : 16,
                     fontWeight: 400,
                     color: "rgba(255,255,255,0.65)",
                     lineHeight: 1.8,
@@ -553,7 +555,7 @@ export default function CircuitBoard() {
                 <p
                   style={{
                     fontFamily: "'Inter', sans-serif",
-                    fontSize: 16,
+                    fontSize: isMobile ? 14 : 16,
                     fontWeight: 400,
                     color: "rgba(255,255,255,0.65)",
                     lineHeight: 1.8,
@@ -625,7 +627,7 @@ export default function CircuitBoard() {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "72px 48px 48px",
+            padding: isMobile ? "64px 16px 24px" : isTablet ? "72px 28px 32px" : "72px 48px 48px",
             position: "relative",
             zIndex: 1,
             boxSizing: "border-box",
@@ -660,7 +662,7 @@ export default function CircuitBoard() {
               Work History.
             </h2>
 
-            <div style={{ display: "flex", gap: 20 }}>
+            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 16 : 20 }}>
               <WorkCard
                 company="LumionMotion"
                 role="Founder & Lead Developer"
