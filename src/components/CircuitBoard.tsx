@@ -469,6 +469,7 @@ export default function CircuitBoard() {
                             icon={tech.icon}
                             color={tech.color}
                             active={isActive}
+                            compact={isMobile || isTablet}
                           />
                         }
                       />
@@ -516,11 +517,11 @@ export default function CircuitBoard() {
             <h2
               style={{
                 fontFamily: "'Inter', sans-serif",
-                fontSize: "clamp(44px, 5.5vw, 78px)",
+                fontSize: isMobile ? "clamp(28px, 7vw, 40px)" : "clamp(44px, 5.5vw, 78px)",
                 fontWeight: 900,
                 letterSpacing: "-0.04em",
                 color: "#ffffff",
-                marginBottom: "5vh",
+                marginBottom: isMobile ? "3vh" : "5vh",
                 lineHeight: 1,
               }}
             >
