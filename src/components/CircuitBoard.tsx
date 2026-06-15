@@ -5,6 +5,7 @@ import {
   useEffect,
   useCallback,
 } from "react";
+import gsap from "gsap";
 import Chip from "./Chip";
 import Navbar from "./Navbar";
 import TiltedCard from "./ui/TiltedCard";
@@ -126,6 +127,18 @@ export default function CircuitBoard() {
   const [fireKey,    setFireKey]    = useState([0, 0, 0]);
   const [activeSection, setActiveSection] = useState(0);
 
+  // ── GSAP animation refs ───────────────────────────────────────────
+  const chipsGridRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionH2Refs    = useRef<(HTMLHeadingElement | null)[]>([]);
+  const sectionLabelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const aboutTitleRef    = useRef<HTMLHeadingElement | null>(null);
+  const aboutBioRef      = useRef<HTMLDivElement | null>(null);
+  const aboutFactsRef    = useRef<HTMLDivElement | null>(null);
+  const workTitleRef     = useRef<HTMLHeadingElement | null>(null);
+  const workCardsRef     = useRef<HTMLDivElement | null>(null);
+  const hasAnimated      = useRef(new Set<string>());
+  const prevFiredRef     = useRef(new Set<number>());
+
   // ── Compute right-angle PCB paths ─────────────────────────────
   const compute = useCallback(() => {
     const c = containerRef.current;
@@ -180,6 +193,24 @@ export default function CircuitBoard() {
   }, []);
 
   useLayoutEffect(() => { compute(); }, [compute]);
+
+  // ── Set initial invisible state before first paint ─────────────
+  useLayoutEffect(() => {
+    const grid0 = chipsGridRefs.current[0];
+    if (grid0) gsap.set(Array.from(grid0.children), { opacity: 0, y: 50, scale: 0.9 });
+    if (sectionH2Refs.current[0])    gsap.set(sectionH2Refs.current[0],    { opacity: 0, y: 25 });
+    if (sectionLabelRefs.current[0]) gsap.set(sectionLabelRefs.current[0], { opacity: 0, x: -18 });
+    if (aboutTitleRef.current)  gsap.set(aboutTitleRef.current,  { opacity: 0, y: 35, skewX: -2 });
+    if (aboutBioRef.current)    gsap.set(aboutBioRef.current.querySelectorAll("p"), { opacity: 0, y: 22 });
+    if (aboutFactsRef.current)  gsap.set(Array.from(aboutFactsRef.current.children), { opacity: 0, x: 28 });
+    if (workTitleRef.current)   gsap.set(workTitleRef.current,   { opacity: 0, y: 35, skewX: -2 });
+    if (workCardsRef.current) {
+      const cards = Array.from(workCardsRef.current.children);
+      if (cards[0]) gsap.set(cards[0], { opacity: 0, x: -70, scale: 0.96 });
+      if (cards[1]) gsap.set(cards[1], { opacity: 0, x:  70, scale: 0.96 });
+    }
+  }, []);
+
   useEffect(() => {
     const ro = new ResizeObserver(compute);
     if (containerRef.current) ro.observe(containerRef.current);
@@ -244,6 +275,124 @@ export default function CircuitBoard() {
     },
     []
   );
+
+  // ── GSAP animation functions ────────────────────────────────────
+  const animateLayerSection = useCallback((layerIdx: number) => {
+    const key = `layer-${layerIdx}`;
+    if (hasAnimated.current.has(key)) return;
+    hasAnimated.current.add(key);
+
+    const grid  = chipsGridRefs.current[layerIdx];
+    const h2    = sectionH2Refs.current[layerIdx];
+    const label = sectionLabelRefs.current[layerIdx];
+    const isFirst = layerIdx === 0;
+
+    const tl = gsap.timeline({ delay: isFirst ? 0.35 : 0.08 });
+
+    if (label) {
+      tl.to(label, {
+        opacity: 1, x: 0, duration: 0.45, ease: "power3.out",
+      });
+    }
+
+    if (h2) {
+      tl.to(h2, {
+        opacity: 1, y: 0, skewX: 0, duration: 0.5, ease: "power3.out",
+      }, "-=0.25");
+    }
+
+    if (grid) {
+      const chips = Array.from(grid.children) as HTMLElement[];
+      // Set initial state for layers 1-3 (layer 0 was set in useLayoutEffect)
+      if (!isFirst) {
+        gsap.set(chips, { opacity: 0, y: 55, scale: 0.88, rotation: 3 });
+      }
+      tl.to(chips, {
+        opacity: 1, y: 0, scale: 1, rotation: 0,
+        duration: 0.65,
+        stagger: { each: 0.1, from: "start", ease: "power1.inOut" },
+        ease: "back.out(1.5)",
+      }, "-=0.3");
+    }
+  }, []);
+
+  const animateAbout = useCallback(() => {
+    if (hasAnimated.current.has("about")) return;
+    hasAnimated.current.add("about");
+
+    const tl = gsap.timeline();
+
+    if (aboutTitleRef.current) {
+      tl.to(aboutTitleRef.current, {
+        opacity: 1, y: 0, skewX: 0, duration: 0.6, ease: "power3.out",
+      });
+    }
+
+    if (aboutBioRef.current) {
+      const paras = aboutBioRef.current.querySelectorAll("p");
+      tl.to(paras, {
+        opacity: 1, y: 0, duration: 0.5,
+        stagger: 0.16, ease: "power2.out",
+      }, "-=0.35");
+    }
+
+    if (aboutFactsRef.current) {
+      const rows = Array.from(aboutFactsRef.current.children);
+      tl.to(rows, {
+        opacity: 1, x: 0, duration: 0.4,
+        stagger: 0.07, ease: "power3.out",
+      }, "-=0.4");
+    }
+  }, []);
+
+  const animateWork = useCallback(() => {
+    if (hasAnimated.current.has("work")) return;
+    hasAnimated.current.add("work");
+
+    const tl = gsap.timeline();
+
+    if (workTitleRef.current) {
+      tl.to(workTitleRef.current, {
+        opacity: 1, y: 0, skewX: 0, duration: 0.6, ease: "power3.out",
+      });
+    }
+
+    if (workCardsRef.current) {
+      const cards = Array.from(workCardsRef.current.children) as HTMLElement[];
+      if (cards[0]) {
+        tl.to(cards[0], {
+          opacity: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out",
+        }, "-=0.35");
+      }
+      if (cards[1]) {
+        tl.to(cards[1], {
+          opacity: 1, x: 0, scale: 1, duration: 0.7, ease: "power3.out",
+        }, "-=0.6");
+      }
+    }
+  }, []);
+
+  // ── Trigger animations ──────────────────────────────────────────
+  useEffect(() => {
+    // Layer 0 on mount
+    const t = setTimeout(() => animateLayerSection(0), 350);
+    return () => clearTimeout(t);
+  }, [animateLayerSection]);
+
+  useEffect(() => {
+    // Layers 1-3 when laser fires
+    firedSet.forEach(tIdx => {
+      if (!prevFiredRef.current.has(tIdx)) {
+        animateLayerSection(tIdx + 1);
+      }
+    });
+    prevFiredRef.current = new Set(firedSet);
+  }, [firedSet, animateLayerSection]);
+
+  useEffect(() => {
+    if (activeSection === 4) animateAbout();
+    if (activeSection === 5) animateWork();
+  }, [activeSection, animateAbout, animateWork]);
 
   // ── Render ────────────────────────────────────────────────────
   return (
@@ -393,7 +542,7 @@ export default function CircuitBoard() {
             >
               <div style={{ width: "100%", maxWidth: 1120 }}>
                 {/* Layer label */}
-                <div style={{ marginBottom: "2.5vh", display: "flex", alignItems: "center", gap: 10 }}>
+                <div ref={el => { sectionLabelRefs.current[layerIdx] = el; }} style={{ marginBottom: "2.5vh", display: "flex", alignItems: "center", gap: 10 }}>
                   <span
                     style={{
                       fontFamily: "'JetBrains Mono', monospace",
@@ -425,6 +574,7 @@ export default function CircuitBoard() {
 
                 {/* Big title */}
                 <h2
+                  ref={el => { sectionH2Refs.current[layerIdx] = el; }}
                   style={{
                     fontFamily: "'Inter', sans-serif",
                     fontSize: "clamp(44px, 5.5vw, 78px)",
@@ -441,6 +591,7 @@ export default function CircuitBoard() {
 
                 {/* chip grid */}
                 <div
+                  ref={el => { chipsGridRefs.current[layerIdx] = el; }}
                   style={{
                     display: "grid",
                     gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : isTablet ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
@@ -515,6 +666,7 @@ export default function CircuitBoard() {
             </p>
 
             <h2
+              ref={aboutTitleRef}
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: isMobile ? "clamp(28px, 7vw, 40px)" : "clamp(44px, 5.5vw, 78px)",
@@ -537,7 +689,7 @@ export default function CircuitBoard() {
               }}
             >
               {/* Bio */}
-              <div>
+              <div ref={aboutBioRef}>
                 <p
                   style={{
                     fontFamily: "'Inter', sans-serif",
@@ -570,7 +722,7 @@ export default function CircuitBoard() {
               </div>
 
               {/* Key facts */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              <div ref={aboutFactsRef} style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 {[
                   ["Age",      "21"],
                   ["Location", "Banja Luka, Bosnia"],
@@ -650,6 +802,7 @@ export default function CircuitBoard() {
             </p>
 
             <h2
+              ref={workTitleRef}
               style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize: "clamp(44px, 5.5vw, 78px)",
@@ -663,7 +816,7 @@ export default function CircuitBoard() {
               Work History.
             </h2>
 
-            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 16 : 20 }}>
+            <div ref={workCardsRef} style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 16 : 20 }}>
               <WorkCard
                 company="LumionMotion"
                 role="Founder & Lead Developer"

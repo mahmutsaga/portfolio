@@ -1,3 +1,5 @@
+import { useRef } from "react";
+import gsap from "gsap";
 import { useBreakpoint } from "@/hooks/useBreakpoint";
 
 interface Props {
@@ -11,8 +13,41 @@ const LINKS = [
   { label: "Work History", section: 5 },
 ];
 
+const NAME_CHARS = "Maksim Krulj".split("");
+
 export default function Navbar({ onScrollTo, activeSection }: Props) {
   const { isMobile, isTablet } = useBreakpoint();
+  const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
+
+  const handleNameEnter = () => {
+    const els = letterRefs.current.filter(Boolean) as HTMLSpanElement[];
+    gsap.killTweensOf(els);
+    gsap.to(els, {
+      y: -7,
+      duration: 0.22,
+      stagger: {
+        each: 0.045,
+        ease: "sine.inOut",
+      },
+      ease: "power2.out",
+      yoyo: true,
+      repeat: 1,
+    });
+  };
+
+  const handleNameLeave = () => {
+    const els = letterRefs.current.filter(Boolean) as HTMLSpanElement[];
+    gsap.killTweensOf(els);
+    gsap.to(els, {
+      y: 0,
+      duration: 0.4,
+      stagger: {
+        each: 0.025,
+        from: "center",
+      },
+      ease: "elastic.out(1, 0.5)",
+    });
+  };
 
   return (
     <nav
@@ -33,9 +68,11 @@ export default function Navbar({ onScrollTo, activeSection }: Props) {
         zIndex: 200,
       }}
     >
-      {/* Name */}
+      {/* Name with wave hover */}
       <button
         onClick={() => onScrollTo(0)}
+        onMouseEnter={handleNameEnter}
+        onMouseLeave={handleNameLeave}
         style={{
           fontFamily: "'Inter', sans-serif",
           fontSize: isMobile ? 13 : 14,
@@ -47,9 +84,20 @@ export default function Navbar({ onScrollTo, activeSection }: Props) {
           cursor: "pointer",
           padding: 0,
           flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          lineHeight: 1,
         }}
       >
-        Maksim Krulj
+        {NAME_CHARS.map((char, i) => (
+          <span
+            key={i}
+            ref={el => { letterRefs.current[i] = el; }}
+            style={{ display: "inline-block" }}
+          >
+            {char === " " ? " " : char}
+          </span>
+        ))}
       </button>
 
       {/* Links */}
