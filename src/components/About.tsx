@@ -21,7 +21,7 @@ const About = () => {
             </h2>
 
             <p className="text-lg md:text-xl text-foreground leading-relaxed mb-6">
-              A 20-year-old developer based in Banja Luka. I'm a React Developer with strong experience building modern, responsive, and user-focused web applications.
+              A 21-year-old developer based in Banja Luka. I'm a React Developer with strong experience building modern, responsive, and user-focused web applications.
             </p>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6">
               I specialize in React and modern frontend tools, focusing on clean UI, smooth interactions, and scalable component architecture. Alongside frontend development, I also work with Python and FastAPI, which allows me to build full-stack solutions, design REST APIs, and connect frontend applications to efficient backend systems.

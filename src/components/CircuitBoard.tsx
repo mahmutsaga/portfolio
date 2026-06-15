@@ -548,7 +548,7 @@ export default function CircuitBoard() {
                     marginBottom: 20,
                   }}
                 >
-                  I'm a 20-year-old full-stack developer and systems thinker
+                  I'm a 21-year-old full-stack developer and systems thinker
                   based in Banja Luka, Bosnia. From the moment I touched a
                   computer as a kid, I was hooked — not just using technology,
                   but understanding how it works at every layer.
@@ -572,7 +572,7 @@ export default function CircuitBoard() {
               {/* Key facts */}
               <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 {[
-                  ["Age",      "20"],
+                  ["Age",      "21"],
                   ["Location", "Banja Luka, Bosnia"],
                   ["Studies",  "Apeiron University, BL"],
                   ["Company",  "++i d.o.o."],
